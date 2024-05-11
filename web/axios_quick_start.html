@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>axios应用实例</title>
+</head>
+<body>
+    <div id="app">
+        <h1>{{msg}}</h1>
+        <table width="200" border="1px">
+            <tr v-for="(item, index) in monsterList">
+                <td>{{item.name}}</td>
+                <td>{{item.age}}</td>
+            </tr>
+        </table>
+    </div>
+
+<script src="js/vue.js"></script>
+<script src="js/axios.min.js"></script>
+<script>
+    let vm = new Vue({
+        el: "#app",
+        data: {
+            msg: "妖怪信息列表",
+            monsterList: []
+        },
+        methods: {
+            list(){ //发送ajax请求获取数据
+                axios.get("http://localhost:63342/zk_projects/axios/web/data/response.data.json")
+                    .then(responseData => {
+                        //使用JSON.stringify(json) 把json对象转成一个字符串,方便观察
+                        console.log("responseData = ", JSON.stringify(responseData));
+                        // console.log("responseData.data.data = ", responseData.data.data);
+                        /*将妖怪data绑定到数据池的monsterList*/
+                        this.monsterList = responseData.data.data.items;
+                        return axios.get("http://localhost:63342/zk_projects/axios/web/data/response.data.json")
+                    }).then(responseData => {
+                    console.log("第二次axios发出 ajax请求responseData= ", responseData)
+                }).catch(err => {
+                    console.log("异常err = ", err)
+                })
+            }
+        },
+        created(){
+            this.list();
+        }
+    })
+</script>
+</body>
+</html>
